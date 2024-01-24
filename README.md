@@ -7,13 +7,13 @@ This is a Python client library for the Music.AI API. For more information on th
 You can install the library via pip:
 
 ```bash
-pip install musicai
+pip install musicai_sdk
 ```
 
 ## Usage
 
 ```python
-from musicai import MusicAiClient
+from musicai_sdk import MusicAiClient
 
 client = MusicAiClient(api_key='your-api-key')
 
