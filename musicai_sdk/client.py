@@ -1,10 +1,13 @@
+import time
 import requests
 from requests.exceptions import HTTPError
 
+
 class MusicAiClient:
-    def __init__(self, api_key):
+    def __init__(self, api_key, job_monitor_interval=2):
         self.api_key = api_key
         self.base_url = 'https://api.music.ai/api'
+        self.job_monitor_interval = job_monitor_interval
 
     def get_headers(self):
         return {
@@ -24,6 +27,12 @@ class MusicAiClient:
 
     def get_job(self, job_id):
         response = requests.get(f'{self.base_url}/job/{job_id}', headers=self.get_headers())
+        if response.status_code // 100 != 2:
+            raise HTTPError(f'Error getting job: {response.status_code} {response.text}')
+        return response.json()
+
+    def get_job_status(self, job_id):
+        response = requests.get(f'{self.base_url}/job/{job_id}/status', headers=self.get_headers())
         if response.status_code // 100 != 2:
             raise HTTPError(f'Error getting job: {response.status_code} {response.text}')
         return response.json()
@@ -50,6 +59,13 @@ class MusicAiClient:
         if response.status_code // 100 != 2:
             raise HTTPError(f'Error deleting job: {response.status_code} {response.text}')
         return response.json()
+
+    def wait_for_job_completion(self, id):
+        while True:
+            job = self.get_job_status(id)
+            if job['status'] in ['SUCCEEDED', 'FAILED']:
+                return self.get_job(id)
+            time.sleep(self.job_monitor_interval),
 
     def get_application_info(self):
         response = requests.get(f'{self.base_url}/application', headers=self.get_headers())
