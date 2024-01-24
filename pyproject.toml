@@ -1,10 +1,9 @@
 [tool.poetry]
-name = "musicai"
+name = "musicai-sdk"
 version = "0.1.0"
 description = "Python sdk for music.ai"
 authors = ["Music.ai Support <support@music.ai>"]
 license = "MIT"
-url = "https://github.com/weAreMusicAI/python-sdk"
 readme = "README.md"
 classifiers = [
     "Programming Language :: Python :: 3",
