@@ -1,0 +1,21 @@
+[tool.poetry]
+name = "musicai"
+version = "0.1.0"
+description = "Python sdk for music.ai"
+authors = ["Music.ai Support <support@music.ai>"]
+license = "MIT"
+url = "https://github.com/weAreMusicAI/python-sdk"
+readme = "README.md"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License"
+]
+
+[tool.poetry.dependencies]
+python = "^3.8"
+requests = "^2.31.0"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
