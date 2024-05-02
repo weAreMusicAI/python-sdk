@@ -21,7 +21,7 @@ client = MusicAiClient(api_key='your-api-key')
 app_info = client.get_application_info()
 print('Application Info:', app_info)
 
-# Upload local ile
+# Upload local file
 file_url = client.upload_file(file_path='your-file-path')
 print('File Url:', file_url)
 
