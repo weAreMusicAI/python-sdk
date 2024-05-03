@@ -1,7 +1,11 @@
+import logging
 import os
 import time
 import requests
 from concurrent.futures import ThreadPoolExecutor
+
+logger = logging.getLogger(__name__)
+logging.basicConfig(level=logging.INFO)
 
 def process_file(client, file_path, output_folder, workflow_id, delete=True, failed_file=None):
     # Upload local file
@@ -13,7 +17,9 @@ def process_file(client, file_path, output_folder, workflow_id, delete=True, fai
     }
     create_job_info = client.create_job(job_name=os.path.basename(file_path), workflow_id=workflow_id, params=workflow_params)
     job_id = create_job_info['id']
-    print('Job Created:', job_id)
+    file_name = os.path.basename(file_path)
+    logger.info(f"Job Created for {file_name} with id {job_id}")
+    
 
     # Polling for job results
     while True:
@@ -21,7 +27,7 @@ def process_file(client, file_path, output_folder, workflow_id, delete=True, fai
         if job_info['status'] == 'SUCCEEDED':
             break
         if job_info['status'] == 'FAILED':
-            print('Job failed')
+            logger.error(f"Job for {file_name} failed")
             # create failed.json file if it does not exist
             if not os.path.exists(failed_file):
                 with open(failed_file, 'w') as f:
@@ -30,10 +36,10 @@ def process_file(client, file_path, output_folder, workflow_id, delete=True, fai
             with open(failed_file, 'a') as f:
                 f.write(file_path + '\n')
             break
-        print('Job not ready yet. Waiting for 5 seconds...')
+        logger.info(f"Waiting for job completion for {file_name}")
         time.sleep(5)
 
-    print('Job Status:', job_info['status'])
+    logger.info(f"Job completed with status {job_info['status']} for {file_name}")
 
     # Download the result
     result = job_info['result']
@@ -52,10 +58,10 @@ def process_file(client, file_path, output_folder, workflow_id, delete=True, fai
             with open(output_path, 'wb') as f:
                 f.write(response.content)
 
-    print('Job Result downloaded.')
+    logger.info(f"Job result downloaded for {file_name}")
     if delete:
         client.delete_job(job_id=job_id)
-        print('File deleted.')
+        logger.info(f"Job for {file_name} deleted from server")
 
 def process_folder(input_folder, output_folder, workflow_id, parallelism=5, delete=True, client=None):
     # add failed.json file to output_folder to control all failed files
