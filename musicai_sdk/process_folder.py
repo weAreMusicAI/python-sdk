@@ -23,7 +23,12 @@ def process_file(client, file_path, output_folder, workflow_id, delete=True, fai
 
     # Polling for job results
     while True:
-        job_info = client.get_job(job_id=job_id)
+        try:
+            job_info = client.get_job(job_id=job_id)
+        except Exception as e:
+            logger.error(f"Failed to get job info for {file_name}: {e}")
+            time.sleep(5)
+            continue
         if job_info['status'] == 'SUCCEEDED':
             break
         if job_info['status'] == 'FAILED':
