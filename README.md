@@ -14,7 +14,6 @@ pip install musicai_sdk
 
 Here's an example of how you can use the client to upload a local file, create a job and more:
 
-
 ```python
 from musicai_sdk import MusicAiClient
 
@@ -35,11 +34,6 @@ workflow_params = {
 create_job_info = client.create_job(job_name='your-job-name', workflow_id='your-workflow-id',params=workflow_params)
 job_id = create_job_info['id']
 print('Job Created:', job_id)
-
-# Wait for job to complete
-job_info = client.wait_for_job_completion(job_id)
-print('Job Status:', job_info['status'])
-print('Job Result:', job_info['result'])
 
 # Get job info
 job_info = client.get_job(job_id=job_id)
@@ -64,3 +58,4 @@ client = MusicAiClient(api_key='your-api-key')
 
 # Use the "parallelism" parameter to set the number of parallel processes and the "delete" parameter to delete the job at MusicAI platform after download completion.
 process_folder(input_folder="local input folder", output_folder="local output folder", workflow_id="workflow ID", client=client, parallelism=10, delete=True)
+```

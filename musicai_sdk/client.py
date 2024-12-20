@@ -60,13 +60,6 @@ class MusicAiClient:
             raise HTTPError(f'Error deleting job: {response.status_code} {response.text}')
         return response.json()
 
-    def wait_for_job_completion(self, id):
-        while True:
-            job = self.get_job_status(id)
-            if job['status'] in ['SUCCEEDED', 'FAILED']:
-                return self.get_job(id)
-            time.sleep(self.job_monitor_interval),
-
     def get_application_info(self):
         response = requests.get(f'{self.base_url}/application', headers=self.get_headers())
         if response.status_code // 100 != 2:
