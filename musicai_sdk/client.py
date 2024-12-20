@@ -1,7 +1,6 @@
-import time
 import requests
 from requests.exceptions import HTTPError
-
+from urllib.parse import urlencode
 
 class MusicAiClient:
     def __init__(self, api_key, job_monitor_interval=2):
@@ -31,16 +30,29 @@ class MusicAiClient:
             raise HTTPError(f'Error getting job: {response.status_code} {response.text}')
         return response.json()
 
-    def get_jobs(self):
-        response = requests.get(f'{self.base_url}/job', headers=self.get_headers())
+    def list_jobs(self, filters=None):
+        params = {}
+
+        if filters:
+            for key, values in filters.items(): 
+                if isinstance(values, (list, tuple)):
+                    params.update({ key: value for value in values })
+                else:
+                    params[key] = values
+
+        query_string = urlencode(params)
+        url = f'{self.base_url}/job?{query_string}' if query_string else f'{self.base_url}/job'
+        response = requests.get(url, headers=self.get_headers())
+
         if response.status_code // 100 != 2:
             raise HTTPError(f'Error getting jobs: {response.status_code} {response.text}')
+        
         return response.json()
 
-    def create_job(self, job_name, workflow_id, params):
+    def add_job(self, job_name, workflow_slug, params):
         data = {
             'name': job_name,
-            'workflow': workflow_id,
+            'workflow': workflow_slug,
             'params': params
         }
         response = requests.post(f'{self.base_url}/job', headers=self.get_headers(), json=data)
@@ -52,6 +64,25 @@ class MusicAiClient:
         response = requests.delete(f'{self.base_url}/job/{job_id}', headers=self.get_headers())
         if response.status_code // 100 != 2:
             raise HTTPError(f'Error deleting job: {response.status_code} {response.text}')
+        return response.json()
+    
+    def list_workflows(self, filters=None):
+        params = {}
+
+        if filters:
+            for key, values in filters.items(): 
+                if isinstance(values, (list, tuple)):
+                    params.update({ key: value for value in values })
+                else:
+                    params[key] = values
+
+        query_string = urlencode(params)
+        url = f'{self.base_url}/workflow?{query_string}' if query_string else f'{self.base_url}/workflow'
+        response = requests.get(url, headers=self.get_headers())
+
+        if response.status_code // 100 != 2:
+            raise HTTPError(f'Error getting workflows: {response.status_code} {response.text}')
+        
         return response.json()
 
     def get_application_info(self):
