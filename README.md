@@ -46,4 +46,8 @@ client.delete_job(job_id=job_id)
 # Get all jobs
 jobs = client.get_jobs()
 print('Jobs:', jobs)
+
+# Get all workflows
+workflows = client.list_workflows()
+print('Workflows:', workflows)
 ```
