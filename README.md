@@ -46,16 +46,4 @@ client.delete_job(job_id=job_id)
 # Get all jobs
 jobs = client.get_jobs()
 print('Jobs:', jobs)
-
-```
-
-The library also provides a `process_folder` function that you can use to process all files in a folder. Please keep in mind this requires a workflow with a single input file. Here's an example of how you can use this function:
-
-```python
-from musicai_sdk import MusicAiClient, process_folder
-
-client = MusicAiClient(api_key='your-api-key')
-
-# Use the "parallelism" parameter to set the number of parallel processes and the "delete" parameter to delete the job at MusicAI platform after download completion.
-process_folder(input_folder="local input folder", output_folder="local output folder", workflow_id="workflow ID", client=client, parallelism=10, delete=True)
 ```
