@@ -31,12 +31,6 @@ class MusicAiClient:
             raise HTTPError(f'Error getting job: {response.status_code} {response.text}')
         return response.json()
 
-    def get_job_status(self, job_id):
-        response = requests.get(f'{self.base_url}/job/{job_id}/status', headers=self.get_headers())
-        if response.status_code // 100 != 2:
-            raise HTTPError(f'Error getting job: {response.status_code} {response.text}')
-        return response.json()
-
     def get_jobs(self):
         response = requests.get(f'{self.base_url}/job', headers=self.get_headers())
         if response.status_code // 100 != 2:
