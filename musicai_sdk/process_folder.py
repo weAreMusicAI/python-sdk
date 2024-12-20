@@ -15,8 +15,8 @@ def process_file(client, file_path, output_folder, workflow_id, delete=True, fai
     workflow_params = {
         'inputUrl': file_url,
     }
-    create_job_info = client.create_job(job_name=os.path.basename(file_path), workflow_id=workflow_id, params=workflow_params)
-    job_id = create_job_info['id']
+    add_job_info = client.add_job(job_name=os.path.basename(file_path), workflow_slug=workflow_id, params=workflow_params)
+    job_id = add_job_info['id']
     file_name = os.path.basename(file_path)
     logger.info(f"Job Created for {file_name} with id {job_id}")
     

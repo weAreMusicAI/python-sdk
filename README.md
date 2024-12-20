@@ -31,8 +31,8 @@ print('File Url:', file_url)
 workflow_params = {
     'inputUrl': file_url,
 }
-create_job_info = client.create_job(job_name='your-job-name', workflow_id='your-workflow-id',params=workflow_params)
-job_id = create_job_info['id']
+add_job_info = client.add_job(job_name='your-job-name', workflow_slug='your-workflow-slug', params=workflow_params)
+job_id = add_job_info['id']
 print('Job Created:', job_id)
 
 # Get job info
