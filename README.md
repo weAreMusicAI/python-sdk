@@ -35,6 +35,11 @@ add_job_info = client.add_job(job_name='your-job-name', workflow_slug='your-work
 job_id = add_job_info['id']
 print('Job Created:', job_id)
 
+# Wait for job to complete
+job_info = client.wait_for_job_completion(job_id)
+print('Job Status:', job_info['status'])
+print('Job Result:', job_info['result'])
+
 # Get job info
 job_info = client.get_job(job_id=job_id)
 print('Job Status:', job_info['status'])
