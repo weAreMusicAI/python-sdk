@@ -81,7 +81,7 @@ song_url = music_ai.upload_file(file_path)
 
 ### Add a job
 
-Creates a new job and returns its correponding `JobId`. The `job_name` can be anything you want (useful for your own reference).
+Creates a new job and returns its correponding ID.
 
 ```python
 def add_job(job_name: str, workflow_slug: str, params: Dict[str, str]) -> str
@@ -230,4 +230,22 @@ If the workflow has two outputs, vocals in WAVE format and bpm, two files will b
   "vocals": "./vocals.wav",
   "bpm": "64"
 }
+```
+
+### Process a single file
+
+Adds a new job and monitor its status till completion. At the end, the job is deleted.
+
+```python
+def process_file(workflow_slug: str, file_path: str, output_folder: str) -> None
+```
+
+#### Example
+
+```python
+await music_ai.process_file(
+  "moises/stems-vocals-drums-bass-other",
+  "./song.mp3",
+  "./stems"
+)
 ```
