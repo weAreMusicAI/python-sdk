@@ -231,21 +231,3 @@ If the workflow has two outputs, vocals in WAVE format and bpm, two files will b
   "bpm": "64"
 }
 ```
-
-### Process a single file
-
-Adds a new job and monitor its status till completion. At the end, the job is deleted.
-
-```python
-def process_file(workflow_slug: str, file_path: str, output_folder: str) -> None
-```
-
-#### Example
-
-```python
-await music_ai.process_file(
-  "moises/stems-vocals-drums-bass-other",
-  "./song.mp3",
-  "./stems"
-)
-```

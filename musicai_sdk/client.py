@@ -88,14 +88,6 @@ class MusicAiClient:
             )
         return response.json()
 
-    def process_file(self, workflow_slug, file_path, output_folder):
-        name = os.path.basename(file_path).split(".")[0]
-        input_url = self.upload_file(file_path)
-        job_id = self.add_job(name, workflow_slug, {"inputUrl": input_url})["id"]
-        job_data = self.wait_for_job_completion(job_id)
-        self.download_job_results(job_data, output_folder)
-        self.delete_job(job_id)
-
     def delete_job(self, job_id):
         response = requests.delete(
             f"{self.base_url}/job/{job_id}", headers=self.get_headers()
@@ -122,6 +114,7 @@ class MusicAiClient:
             if query_string
             else f"{self.base_url}/workflow"
         )
+        print("url=", url)
         response = requests.get(url, headers=self.get_headers())
 
         if response.status_code // 100 != 2:
