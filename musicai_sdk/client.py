@@ -1,9 +1,11 @@
-import time
-import requests
-import os
 import json
-from requests.exceptions import HTTPError
+import os
+import time
 from urllib.parse import urlencode
+
+import requests
+from requests.exceptions import HTTPError
+
 from .utils import extract_file_extension_from_url, extract_name_from_url
 
 
@@ -114,7 +116,6 @@ class MusicAiClient:
             if query_string
             else f"{self.base_url}/workflow"
         )
-        print("url=", url)
         response = requests.get(url, headers=self.get_headers())
 
         if response.status_code // 100 != 2:
@@ -159,7 +160,7 @@ class MusicAiClient:
         result_json_downloads = {}
 
         for result, value in job["result"].items():
-            if value.startswith("https://"):
+            if isinstance(value, str) and value.startswith("https://"):
                 file_name = (
                     f"{result}.{extract_file_extension_from_url(value)}"
                     if self.save_output_to_folder
