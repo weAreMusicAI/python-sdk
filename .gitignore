@@ -1,7 +1,8 @@
-musicai/__pycache__/
 test.py
 test.mp3
 dist/
 output/
 folder_test/
-__pycache__
+__pycache__/
+.env.local
+demo.ogg

@@ -1,0 +1,11 @@
+version: '3'
+
+services:
+  python-sdk-tests:
+    build:
+      context: ../..
+      dockerfile: tests/docker/Dockerfile.test
+    volumes:
+      - ../..:/app
+    env_file:
+      - ./.env.local 

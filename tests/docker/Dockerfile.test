@@ -1,0 +1,24 @@
+FROM python:3.11-slim
+
+WORKDIR /app
+
+# Install Poetry
+RUN pip install poetry
+
+# Copy only the files needed to install dependencies
+COPY pyproject.toml README.md* ./
+
+# Configure poetry to not create a virtual environment inside the container
+RUN poetry config virtualenvs.create false
+
+# Generate a fresh lock file
+RUN poetry lock
+
+# Install dependencies (but not the root project)
+RUN poetry install --no-interaction --no-ansi --no-root
+
+# Copy the rest of the application
+COPY . .
+
+# Command to run tests
+CMD ["pytest", "tests/"] 
