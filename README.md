@@ -81,26 +81,60 @@ song_url = music_ai.upload_file(file_path)
 
 ### Add a job
 
-Creates a new job and returns its correponding ID.
+Creates a new job and returns its corresponding ID.
 
 ```python
-def add_job(job_name: str, workflow_slug: str, params: Dict[str, str]) -> str
+def add_job(
+    job_name: str,
+    workflow_slug: str,
+    params: Dict[str, Any],
+    **options
+) -> str
 ```
 
 #### Example
 
 ```python
 song_url = "https://your-website.com/song.mp3"
+job_id = music_ai.add_job("job-1", "music-ai/isolate-drums", {
+    "inputUrl": song_url,
+})
+```
+
+Check the [documentation](https://music.ai/docs) for all the existing workflows and expected correspondent parameters.
+
+#### Custom storage
+
+You can optionally store outputs in your own storage by providing upload URLs. To do that, use the `copy_results_to` option, defining one upload URL for each output of the workflow.
+
+```python
 job_id = music_ai.add_job(
     "job-1",
-    "music-ai/generate-chords",
+    "music-ai/isolate-drums",
     {
-        "inputUrl": song_url
+        "inputUrl": song_url,
+    },
+    copy_results_to={
+        "Kick drum": "https://example.com/my-upload-url-1",
+        "Snare drum": "https://example.com/my-upload-url-2"
     }
 )
 ```
 
-Check the [documentation](https://music.ai/docs) for all the existing workflows and expected correspondent parameters.
+The example above uses the `music-ai/isolate-drums` workflow, which has 3 outputs, Kick drum, Snare drum, and Other. We have provided upload URLs for the first two. Since we haven't provided a URL for the third output, it will be stored in Music AI's storage, as usual.
+
+The JSON below contains the data for the job created above. Please note that Music AI doesn't provide download URLs for the outputs directed to your custom storage.
+
+```json
+{
+  // ...
+  "result": {
+    "Kick drum": "[custom storage]",
+    "Snare drum": "[custom storage]",
+    "Other": "https://cdn.music.ai/example/vocals.wav"
+  }
+}
+```
 
 ### Get a job
 

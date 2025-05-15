@@ -6,18 +6,32 @@ from urllib.parse import urlencode
 import requests
 from requests.exceptions import HTTPError
 
-from .utils import extract_file_extension_from_url, extract_name_from_url
+from .utils import (
+    extract_file_extension_from_url,
+    extract_name_from_url,
+    get_user_agent,
+)
 
 
 class MusicAiClient:
-    def __init__(self, api_key, job_monitor_interval=2, save_output_to_folder=True):
+    def __init__(
+        self,
+        api_key,
+        job_monitor_interval=2,
+        save_output_to_folder=True,
+        user_agent=None,
+    ):
         self.api_key = api_key
         self.base_url = "https://api.music.ai/api"
         self.job_monitor_interval = job_monitor_interval
         self.save_output_to_folder = save_output_to_folder
+        self.user_agent = user_agent or get_user_agent()
 
     def get_headers(self):
-        return {"Authorization": self.api_key}
+        return {
+            "Authorization": self.api_key,
+            "User-Agent": self.user_agent,
+        }
 
     def upload_file(self, file_path):
         response = requests.get(f"{self.base_url}/upload", headers=self.get_headers())
@@ -79,8 +93,19 @@ class MusicAiClient:
 
         return response.json()
 
-    def add_job(self, job_name, workflow_slug, params):
-        data = {"name": job_name, "workflow": workflow_slug, "params": params}
+    def add_job(self, job_name, workflow_slug, params, **options):
+        data = {
+            "name": job_name,
+            "workflow": workflow_slug,
+            "params": params,
+        }
+        
+        if "metadata" in options:
+            data["metadata"] = options["metadata"]
+            
+        if "copy_results_to" in options:
+            data["copyResultsTo"] = options["copy_results_to"]
+            
         response = requests.post(
             f"{self.base_url}/job", headers=self.get_headers(), json=data
         )

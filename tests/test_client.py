@@ -3,6 +3,7 @@ import re
 import shutil
 import tempfile
 import uuid
+import requests
 
 import pytest
 
@@ -70,6 +71,38 @@ class TestMusicAiClient:
         job_id = result.get("id")
         assert job_id is not None
         assert re.match(UUID_REGEX, job_id)
+    
+    def test_add_job_with_custom_storage(self, client):
+        """Test adding a job with custom storage"""
+        # Arrange
+        upload_response = requests.get(f"{client.base_url}/upload", headers=client.get_headers())
+        upload_response.raise_for_status()
+        upload_url = upload_response.json()["uploadUrl"]
+        
+        # Act
+        result = client.add_job(
+            "sdk-test-custom-storage",
+            "sdk-test",
+            {
+                "file": "https://music.ai/demo.ogg",
+            },
+            copy_results_to={
+                "file": upload_url
+            }
+        )
+        
+        # Assert
+        assert isinstance(result, dict)
+        job_id = result.get("id")
+        assert job_id is not None
+        assert re.match(UUID_REGEX, job_id)
+        
+        # Additional verification for custom storage
+        completed_job = client.wait_for_job_completion(job_id)
+        assert completed_job["status"] == "SUCCEEDED"
+        assert "result" in completed_job
+        assert "file" in completed_job["result"]
+        assert completed_job["result"]["file"] == "[custom storage]"
     
     def test_get_job(self, client):
         """Test getting job details"""
