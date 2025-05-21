@@ -15,14 +15,30 @@ def extract_file_extension_from_url(url):
 
 
 def get_version():
-    package_path = Path(__file__).parent.parent / "pyproject.toml"
-    with open(package_path, "r") as f:
-        content = f.read()
+    try:
+        import importlib.metadata
+        return importlib.metadata.version("musicai-sdk")
+    except (ImportError, importlib.metadata.PackageNotFoundError):
+        try:
+            import os
+            import musicai_sdk
 
-        for line in content.splitlines():
-            if line.startswith("version = "):
-                return line.split("=")[1].strip().strip("\"'")
-    return "unknown"
+            package_dir = os.path.dirname(os.path.abspath(musicai_sdk.__file__))
+
+            pyproject_path = os.path.join(
+                os.path.dirname(package_dir), "pyproject.toml"
+            )
+
+            if os.path.exists(pyproject_path):
+                with open(pyproject_path, "r") as f:
+                    for line in f:
+                        if line.strip().startswith("version"):
+                            version = line.split("=")[1].strip().strip("\"'")
+                            return version
+        except Exception:
+            pass
+
+        return "unknown"
 
 
 def get_user_agent(environment="SDK-Python", version=None):
