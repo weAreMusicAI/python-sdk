@@ -43,27 +43,22 @@ pip install musicai_sdk
 
 ## API Reference
 
-### Types
+### Job Response Fields
 
-```python
-from typing import Optional, Dict
-from dataclasses import dataclass
-
-@dataclass
-class Job:
-    id: str
-    app: str
-    workflow: str
-    status: str  # Could validate values separately
-    batchName: Optional[str]
-    workflowParams: Dict[str, str]
-    metadata: Dict[str, str]
-    result: Dict[str, str]
-    name: str
-    createdAt: str
-    startedAt: str
-    completedAt: Optional[str]
-```
+| Field | Type | Description |
+|-------|------|-------------|
+| `id` | `string` | Unique identifier for the job |
+| `app` | `string` | Name of the application that created this job |
+| `name` | `string` | Human-readable name for the job |
+| `batchName` | `string \| null` | Optional batch identifier if job was created as part of a batch |
+| `metadata` | `object` | Custom metadata provided when creating the job | 
+| `workflow` | `string` | Name of the workflow used for processing | 
+| `workflowParams` | `object` | Input parameters provided when creating the job |
+| `status` | `string` | Current job status (`QUEUED`, `STARTED`, `SUCCEEDED`, `FAILED`) | 
+| `result` | `object \| null` | Processing results (URLs to output files) when status is `SUCCEEDED` |
+| `createdAt` | `string` | ISO timestamp when job was created |
+| `startedAt` | `string` | ISO timestamp when processing started |
+| `completedAt` | `string` | ISO timestamp when processing completed |
 
 ### Upload file
 
@@ -161,6 +156,7 @@ The `job` variable value:
     "name": "Stems Isolations - Vocals & accompaniments"
   },
   "status": "SUCCEEDED",
+  "error": null,
   "batchName": null,
   "workflowParams": {
     "inputUrl": "https://your-server.com/audio-input.m4a"
