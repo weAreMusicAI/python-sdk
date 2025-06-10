@@ -22,7 +22,7 @@ class MusicAiClient:
         user_agent=None,
     ):
         self.api_key = api_key
-        self.base_url = "https://api.music.ai/api"
+        self.base_url = "https://api.music.ai/v1"
         self.job_monitor_interval = job_monitor_interval
         self.save_output_to_folder = save_output_to_folder
         self.user_agent = user_agent or get_user_agent()
@@ -99,13 +99,13 @@ class MusicAiClient:
             "workflow": workflow_slug,
             "params": params,
         }
-        
+
         if "metadata" in options:
             data["metadata"] = options["metadata"]
-            
+
         if "copy_results_to" in options:
             data["copyResultsTo"] = options["copy_results_to"]
-            
+
         response = requests.post(
             f"{self.base_url}/job", headers=self.get_headers(), json=data
         )
