@@ -241,4 +241,63 @@ class TestMusicAiClient:
         assert isinstance(result, dict)
         assert "id" in result
         assert re.match(UUID_REGEX, result["id"])
-        assert "name" in result 
+        assert "name" in result
+
+    def test_request_with_per_call_timeout(self, client):
+        """Test that a per-call timeout still allows successful requests"""
+        # Act
+        result = client.get_application_info(timeout=30)
+
+        # Assert
+        assert isinstance(result, dict)
+        assert "id" in result
+        assert re.match(UUID_REGEX, result["id"])
+
+    def test_request_with_client_timeout(self, client):
+        """Test that the client-level timeout is applied to requests"""
+        # Arrange
+        client.timeout = 30
+
+        # Act
+        result = client.get_application_info()
+
+        # Assert
+        assert isinstance(result, dict)
+        assert "id" in result
+        assert re.match(UUID_REGEX, result["id"])
+
+    def test_short_per_call_timeout_raises(self, client):
+        """Test that an overly short per-call timeout raises Timeout"""
+        with pytest.raises(requests.exceptions.Timeout):
+            client.get_application_info(timeout=0.0001)
+
+    def test_short_client_timeout_raises(self, client):
+        """Test that an overly short client-level timeout raises Timeout"""
+        # Arrange
+        client.timeout = 0.0001
+
+        # Act / Assert
+        with pytest.raises(requests.exceptions.Timeout):
+            client.get_application_info()
+
+    def test_per_call_timeout_overrides_client_timeout(self, client):
+        """Test that an explicit per-call timeout overrides the client default"""
+        # Arrange — client default would time out immediately
+        client.timeout = 0.0001
+
+        # Act — per-call timeout disables the timeout
+        result = client.get_application_info(timeout=None)
+
+        # Assert
+        assert isinstance(result, dict)
+        assert "id" in result
+        assert re.match(UUID_REGEX, result["id"])
+
+    def test_per_call_short_timeout_overrides_client_timeout(self, client):
+        """Test that a short per-call timeout overrides a generous client default"""
+        # Arrange
+        client.timeout = 30
+
+        # Act / Assert
+        with pytest.raises(requests.exceptions.Timeout):
+            client.get_application_info(timeout=0.0001)
